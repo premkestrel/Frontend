@@ -1,0 +1,28 @@
+//For getting the client details use this link
+const Http = new XMLHttpRequest();
+const url='http://127.0.0.1:5002/getClient';
+Http.open("GET", url);
+Http.send();
+Http.onreadystatechange = function() {
+                if(this.readyState ==4 && this.status ==200){
+                var response = JSON.parse(Http.responseText);
+                //text2.text=response;//response will contain the information about the client 
+          }
+}
+
+
+
+
+
+
+//For getting the Employee details use this link
+const Http = new XMLHttpRequest();
+var id1=500
+const url='http://127.0.0.1:5002/getEmployee/'+id1;
+ Http.open("GET", url);
+Http.send();
+Http.onreadystatechange = function() {
+                if(this.readyState ==4 && this.status ==200){
+			var response = JSON.parse(Http.responseText);
+			text3.text=response;
+                }}

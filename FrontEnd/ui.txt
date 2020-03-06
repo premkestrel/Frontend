@@ -1,0 +1,64 @@
+//post method references...
+button1.onPointerClickObservable.add(function(){
+                    const Http = new XMLHttpRequest();
+                //var id=document.getElementById("id1");
+                const url='http://127.0.0.1:5002/output';
+               // Http.open("GET", url);
+               Http.open("POST", url, true);
+                var params = JSON.stringify({ 'appoverGUID': text1.text });
+                Http.setRequestHeader("Content-type", "application/json; charset=utf-8");
+                Http.setRequestHeader("Content-length", params.length);
+                Http.setRequestHeader("Connection", "close");
+                Http.send(params);
+                //Http.send();
+                 //console.log(r);
+                
+
+                Http.onreadystatechange = function() {
+                if(this.readyState ==4 && this.status ==200){
+                //console.log(Http.responseText)
+                var response = JSON.parse(Http.responseText);
+                //alert(response);
+                text1.text=response;
+                }}
+                // var xmlHttp = new XMLHttpRequest();
+                // xmlHttp.open( "GET", url, false ); // false for synchronous request
+                // xmlHttp.send( null );
+                // return xmlHttp.responseText;
+                
+                
+                
+                })
+
+
+
+//    Http.open("POST", url, true);
+            //     var params = JSON.stringify({ 'appoverGUID': text1.text });
+            //     Http.setRequestHeader("Content-type", "application/json; charset=utf-8");
+            //     Http.setRequestHeader("Content-length", params.length);
+            //     Http.setRequestHeader("Connection", "close");
+            //     Http.send(params);
+const Http = new XMLHttpRequest();
+                //var id=document.getElementById("id1");
+                const url='http://127.0.0.1:5002/getClient';
+                Http.open("GET", url);
+            
+                Http.send();
+                 //console.log(r);
+                
+
+                Http.onreadystatechange = function() {
+                if(this.readyState ==4 && this.status ==200){
+                //console.log(Http.responseText)
+                var response = JSON.parse(Http.responseText);
+                //alert(response);
+                text2.text=response;
+                }}
+                // var xmlHttp = new XMLHttpRequest();
+                // xmlHttp.open( "GET", url, false ); // false for synchronous request
+                // xmlHttp.send( null );
+                // return xmlHttp.responseText;
+                
+                
+                
+                })
