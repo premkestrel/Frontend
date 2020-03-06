@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+
+        <!-- Babylon.js -->
+        <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+        <script src="https://preview.babylonjs.com/ammo.js"></script>
+        <script src="https://preview.babylonjs.com/cannon.js"></script>
+        <script src="https://preview.babylonjs.com/Oimo.js"></script>
+        <script src="https://preview.babylonjs.com/libktx.js"></script>
+        <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        var engine = null;
+        var scene = null;
+        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
+        var createScene = function () {
+        
+        	// This creates a basic Babylon Scene object (non-mesh)
+        	var scene = new BABYLON.Scene(engine);
+            // enable physics in the scene
+            scene.enablePhysics(new BABYLON.Vector3(0,-1,0), new BABYLON.AmmoJSPlugin());
+        	
+        	// Create camera and lighting
+        	var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 2, -25), scene);
+        	camera.setTarget(BABYLON.Vector3.Zero());
+        	var light = new BABYLON.DirectionalLight("light", new BABYLON.Vector3(0, -0.5, 1.0), scene);
+        	light.position = new BABYLON.Vector3(0, 15, -6);
+        
+            // Create a variable to hold our score.
+            var score = 0;
+        	
+        	// Create default environment
+        	var environment = scene.createDefaultEnvironment({
+        		skyboxSize: 300,
+        		groundSize: 200
+        	});
+        	environment.setMainColor(new BABYLON.Color3(0.1, 0.3, 0.5));
+        	
+        	// Create spheres
+            var numberOfSpheres = 10;
+            var spheres = [];
+            for (let index = 0; index < numberOfSpheres; index++) {
+                spheres[index] = BABYLON.Mesh.CreateIcoSphere("sphere", {radius:0.8, flat:true, subdivisions: 16}, this.scene);
+                spheres[index].material = new BABYLON.StandardMaterial("material", scene)
+                spheres[index].material.diffuseColor = new BABYLON.Color3(0.588, 0.805, 0.896)
+                spheres[index].physicsImpostor = new BABYLON.PhysicsImpostor(spheres[index], BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.7 }, scene);
+                spheres[index].position = new BABYLON.Vector3(Math.random() * 20 - 10, 10, Math.random() * 10 - 5);
+            }
+            
+            // When a sphere is clicked update the score
+            scene.onPointerObservable.add((e)=>{
+                if(e.type == BABYLON.PointerEventTypes.POINTERDOWN){
+                    spheres.forEach((s)=>{
+                        if(e.pickInfo.pickedMesh == s){
+                            fadeSphere(s);
+                        }
+                    });
+                }
+            });
+        
+            //add a function that scales and fades the sphere
+            // function fadeSphere(clickedSphere){
+            //     score++;
+            //     clickedSphere.isPickable = false;
+            //     button.textBlock.text = "Reset Game (Score: "+score+")";
+            //     BABYLON.Animation.CreateAndStartAnimation("sphereScaleDown", clickedSphere, "scaling.x", 30, 10, 1, 0.5, 0);
+            //     BABYLON.Animation.CreateAndStartAnimation("sphereScaleDown", clickedSphere, "scaling.y", 30, 10, 1, 0.5, 0);
+            //     BABYLON.Animation.CreateAndStartAnimation("sphereScaleDown", clickedSphere, "scaling.z", 30, 10, 1, 0.5, 0);
+            //     BABYLON.Animation.CreateAndStartAnimation("sphereVisAnim", clickedSphere, "visibility", 30, 10, 1, 0, 0);
+            // };
+        
+            function resetGame(){
+                score = 0;
+                //button.textBlock.text = "Reset Game";
+                for (let index = 0; index < numberOfSpheres; index++) {
+                    spheres[index].isPickable = true;
+                    spheres[index].visibility = 1;
+                    spheres[index].scaling.x = 1;
+                    spheres[index].scaling.y = 1;
+                    spheres[index].scaling.z = 1;
+                    spheres[index].position = new BABYLON.Vector3(Math.random() * 20 - 10, 10, Math.random() * 10 - 5);
+                    spheres[index].physicsImpostor.setLinearVelocity(new BABYLON.Vector3());
+                }
+            };
+            setInterval(resetGame,20000);
+        
+            // Create a button to restart the game
+            var plane = BABYLON.Mesh.CreatePlane("plane",100);
+            plane.position.set(0, 2, 10);
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button", "Start Manager simulator Game");
+            button.width = 0.25;
+            button.height = "40px";
+            button.color = "white";
+            button.background = "black";
+            button.onPointerUpObservable.add(function () {
+              window.location.href="./level.html";
+            });
+            advancedTexture.addControl(button);
+           
+
+            var plane1 = BABYLON.Mesh.CreatePlane("plane1",100);
+            plane1.position.set(-10, 2, 10);
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane1);
+            var button = BABYLON.GUI.Button.CreateSimpleButton("button", "Home");
+            button.width = 0.15;
+            button.height = "15px";
+            button.color = "white";
+            button.background = "black";
+        
+        
+        	// Add vr
+        	var helper = scene.createDefaultVRExperience({createDeviceOrientationCamera: false})
+            helper.enableInteractions()
+
+
+
+           
+            var greenBox = BABYLON.MeshBuilder.CreateBox("gnbx", {}, scene);
+	greenBox.material = new BABYLON.StandardMaterial("", scene);
+    greenBox.material.diffuseColor = BABYLON.Color3.Green();
+    greenBox.material.alpha = 0.5;
+
+    var pivotAt = new BABYLON.Vector3(20, 13, 12);
+    var greenBoxCenter = new BABYLON.Vector3(1, 2, 1);
+
+    var greenBoxTranslate = greenBoxCenter.subtract(pivotAt);
+
+    greenBox.position = pivotAt;
+
+	greenBox.setPivotMatrix(BABYLON.Matrix.Translation(greenBoxTranslate.x, greenBoxTranslate.y, greenBoxTranslate.z));
+   
+    scene.registerBeforeRender(function() {		
+        var rotationOnTick = 0.0; 
+        greenBox.rotation.z += rotationOnTick;
+      // document.getElementById('infoLayer').innerHTML = "centerWorld" + greenBox.getBoundingInfo().boundingBox.centerWorld;
+
+    });
+
+
+
+          
+    var greenBox = BABYLON.MeshBuilder.CreateBox("gnbx", {}, scene);
+	greenBox.material = new BABYLON.StandardMaterial("", scene);
+    greenBox.material.diffuseColor = BABYLON.Color3.Green();
+    greenBox.material.alpha = 0.5;
+
+    var pivotAt = new BABYLON.Vector3(-20, 13, 12);
+    var greenBoxCenter = new BABYLON.Vector3(1, 2, 1);
+
+    var greenBoxTranslate = greenBoxCenter.subtract(pivotAt);
+
+    greenBox.position = pivotAt;
+
+	greenBox.setPivotMatrix(BABYLON.Matrix.Translation(greenBoxTranslate.x, greenBoxTranslate.y, greenBoxTranslate.z));
+   
+    scene.registerBeforeRender(function() {		
+        var rotationOnTick = -0.01; 
+        greenBox.rotation.z += rotationOnTick;
+      // document.getElementById('infoLayer').innerHTML = "centerWorld" + greenBox.getBoundingInfo().boundingBox.centerWorld;
+    });
+
+
+            return scene;
+        };
+        
+        engine = createDefaultEngine();
+        if (!engine) throw 'engine should not be null.';
+        scene = createScene();
+
+        engine.runRenderLoop(function () {
+            if (scene) {
+                scene.render();
+            }
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<html>
+
+<head>
+    <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/ammo.js"></script>
+    <script src="https://preview.babylonjs.com/cannon.js"></script>
+    <script src="https://preview.babylonjs.com/Oimo.js"></script>
+    <script src="https://preview.babylonjs.com/libktx.js"></script>
+    <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+    <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<canvas id="renderCanvas" width="507" height="608" touch-action="none" tabindex="1" style="touch-action: none;"></canvas>
+<script>
+    var canvas = document.getElementById("renderCanvas");
+    var engine = null;
+    var scene = null;
+    var createDefaultEngine = function () {
+        return new BABYLON.Engine(canvas, true,
+            { preserveDrawingBuffer: true, stencil: true });
+    };
+    var createScene = function () {
+        var scene = new BABYLON.Scene(engine);
+        var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI', undefined, undefined, BABYLON.Texture.NEAREST_NEAREST);
+        camera.setTarget(BABYLON.Vector3.Zero());
+        /////////////////////////////-/////////////////////////////////
+        var plane4 = BABYLON.Mesh.CreatePlane("plane4", 2);
+        plane4.position.y = 4.5;
+        plane4.position.z = -6;
+        plane4.position.x = -2.5;
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane4);
+        var button4 = BABYLON.GUI.Button.CreateSimpleButton("but", "-");
+        advancedTexture.addControl(button4);
+        button4.top = "0px";
+        button4.left = "0px";
+        button4.width = 0.6;
+        button4.height = 0.25;
+        button4.thickness = 8;
+        button4.children[0].color = "#DFF9FB";
+        button4.children[0].fontSize = 90;
+        button4.cornerRadius = 20;
+        button4.thickness = 8;
+        button4.color = "#EB4D4B";
+        ////////////////////////////+//////////////////////////
+        var plane5 = BABYLON.Mesh.CreatePlane("plane5", 2);
+        plane5.position.y = 4.5;
+        plane5.position.z = -6;
+        plane5.position.x = 2.6;
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane5);
+        var button3 = BABYLON.GUI.Button.CreateSimpleButton("but", "+");
+        advancedTexture.addControl(button3);
+        button3.top = "0px";
+        button3.left = "0px";
+        button3.width = 0.6;
+        button3.height = 0.25;
+        button3.fontSize = 150;
+        button3.cornerRadius = 20;
+        button3.thickness = 8;
+        button3.children[0].color = "#DFF9FB";
+        button3.children[0].fontSize = 90;
+        button3.color = "#EB4D4B";
+
+        /////////////////////////displaying the value///////////////////////
+        var plane2 = BABYLON.Mesh.CreatePlane("plane2", 3);
+        plane2.position.y = 4;
+        plane2.position.x = 0;
+        plane2.position.z = -5;
+        var advancedTexture2 = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane2);
+        var text1 = new BABYLON.GUI.TextBlock();
+        text1.text = "0";
+        text1.color = "white";
+        text1.fontSize = 50;
+        advancedTexture2.addControl(text1);
+        scene.onDispose = function () { clearInterval(fred) };
+        button4.onPointerClickObservable.add(function () {//decrement
+            var c = parseInt(text1.text);
+            console.log(c);
+            if (c > 0) {
+                c--;
+                text1.text = "" + c;
+            }
+
+
+
+        });
+        button3.onPointerClickObservable.add(function () {//increment
+            var c = parseInt(text1.text);
+            console.log(c);
+            c++;
+            text1.text = "" + c;
+
+
+
+        });
+
+        return scene;
+
+    };
+    engine = createDefaultEngine();
+    if (!engine) throw 'engine should not be null.';
+    scene = createScene();
+
+    engine.runRenderLoop(function () {
+        if (scene) {
+            scene.render();
+        }
+    });
+
+    // // Resize
+    // window.addEventListener("resize", function () {
+    //     engine.resize();
+    // });
+</script>
+
+</html>

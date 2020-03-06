@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Babylon.js sample code</title>
+
+        <!-- Babylon.js -->
+        <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+        <script src="https://preview.babylonjs.com/ammo.js"></script>
+        <script src="https://preview.babylonjs.com/cannon.js"></script>
+        <script src="https://preview.babylonjs.com/Oimo.js"></script>
+        <script src="https://preview.babylonjs.com/libktx.js"></script>
+        <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+        <script src="https://preview.babylonjs.com/babylon.js"></script>
+        <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+
+        <style>
+            html, body {
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #renderCanvas {
+                width: 100%;
+                height: 100%;
+                touch-action: none;
+            }
+        </style>
+    </head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        var engine = null;
+        var scene = null;
+        var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
+        var createScene = function () {
+        	const scene = new BABYLON.Scene(engine);
+            
+            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+            light.intensity = 0.7;
+        	var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 0, -50), scene);
+        	camera.attachControl(canvas);
+            // var hdrTexture = new BABYLON.CubeTexture("https://wpamelia.com/wp-content/uploads/2019/02/7644.jpg", scene);
+            //        scene.createDefaultSkybox(hdrTexture, true, 5000);
+        
+        
+            //scene.createDefaultSkybox(hdrTexture, true, 200, 0.7);
+            scene.clearColor = BABYLON.Color3.Black();
+        
+            var gl = new BABYLON.GlowLayer("glow", scene);
+        
+        
+        var makeBeerText = function(text, board, neoncolor){
+        	const plane = BABYLON.Mesh.CreatePlane('', 35, scene);
+        	plane.material = new BABYLON.StandardMaterial('', scene);
+            
+        	const texture = new BABYLON.DynamicTexture('', 812, scene, true);
+        
+        
+            const context = texture.getContext();
+            const fontSize = 100
+            const lineHeight = fontSize * 1.286;
+            const ad = text
+            context.fillStyle = 'white';
+            context.font = ""+fontSize+"px Apple Chancery";
+            const textWidth = context.measureText(' TRY AGAIN ').width;
+            var BeerCanvas = {
+                width: context.measureText(ad).width +5,
+                height: fontSize
+            }
+            
+           
+            if(board){
+                 context.lineWidth = 15;
+                roundRect(context, 0, 0, textWidth, lineHeight, {
+            tl: 50,
+            br: 25
+            }, false);
+            }else{
+                context.fillText(ad, 0, BeerCanvas.height);
+            }
+                texture.update();
+        
+        	plane.material.opacityTexture = texture;
+        	plane.material.emissiveColor = neoncolor;
+            plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+            plane.position.z = -4;
+            plane.position.x=4;
+            plane.position.y=-8;
+           return plane;
+        }
+        var x=" TRY AGAIN  "
+        var beertext = new makeBeerText(x, false, new BABYLON.Color3(0.63, 0.63, 0.27))
+        var beertext_Board = new makeBeerText('Cold Beer', true, new BABYLON.Color3(1, 0.28, 0))
+        
+        scene.registerBeforeRender(()=>{
+        beertext_Board.material.emissiveColor.r = (Math.random()*(1+.5))-.5
+        })
+        var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 40}, scene);
+            var sphereMat = new BABYLON.StandardMaterial("coreMat", scene)
+            sphereMat.diffuseColor = new BABYLON.Color3(0.2, 0.3, 0.4); 
+            sphereMat.specularColor = BABYLON.Color3.Black();
+        
+            sphere.material = sphereMat;
+        
+        
+            var particleSystem = new BABYLON.ParticleSystem("particles", 10000, scene);
+            particleSystem.particleTexture = new BABYLON.Texture("flare.png", scene);
+        
+            particleSystem.minSize = 0.20;
+            particleSystem.maxSize = 0.30;
+           sphere.visibility=0;
+            // Where the particles come from
+            var meshEmitter = new BABYLON.MeshParticleEmitter(sphere);
+            particleSystem.particleEmitterType = meshEmitter;
+        
+            particleSystem.emitter= sphere;
+        
+            // Life time of each particle (random between...
+            particleSystem.minLifeTime = 4.0;
+            particleSystem.maxLifeTime = 4.0;
+        
+            // Emission rate
+            particleSystem.emitRate = 500;
+        
+            // Blend mode : BLENDMODE_ONEONE, or BLENDMODE_STANDARD
+            particleSystem.blendMode = BABYLON.ParticleSystem.BLENDMODE_ONEONE;
+        
+            // Set the gravity of all particles
+            particleSystem.gravity = new BABYLON.Vector3(0, 0, 0);
+        
+            // Speed
+            particleSystem.minEmitPower = 1;
+            particleSystem.maxEmitPower = 4;
+            particleSystem.updateSpeed = 1/60;
+        
+            // Start the particle system
+            particleSystem.start();
+
+            // var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+            var plane6 = BABYLON.Mesh.CreatePlane("plane6", 40);
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane6);
+            
+            var textstring=" ' Your idea was not enough to score well keep practicing... '"
+            var text1 = new BABYLON.GUI.TextBlock();
+            text1.text = textstring;
+            text1.fontStyle=" Bold";
+            text1.color = "white";
+            text1.fontSize = 34;
+            advancedTexture.addControl(text1);  
+            plane6.position.y = -4;
+                        plane6.position.z = -10;
+                        plane6.position.x = 0; 
+        
+        // var plane6 = BABYLON.Mesh.CreatePlane("plane6", 10);
+        //                 plane6.position.y = -8;
+        //                 plane6.position.z = -10;
+        //                 plane6.position.x = 0;
+                        
+            // var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane6);
+                  var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI();
+              advancedTexture.rootContainer.scaleX = window.devicePixelRatio;
+                        advancedTexture.rootContainer.scaleY = window.devicePixelRatio;
+                        var button3 = BABYLON.GUI.Button.CreateSimpleButton("but1", 'CLICK');
+                        advancedTexture.addControl(button3);
+                        button3.top = "0px";
+                        button3.left = "0px";
+                        button3.width = '421px';
+                        button3.height = '238px';
+                        button3.cornerRadius = 20;
+                        button3.color = "rgb(40, 40, 40)";
+                        button3.fontSize = 137;
+                        button3.fontFamily = "Georgia";
+                        button3.thickness = 0;
+                        button3.textBlock.outlineWidth = 8;
+                        var oc = "rgb(200, 200, 20)";
+                        button3.textBlock.outlineColor = oc;
+                        advancedTexture.addControl(button3);
+                        fred = setInterval(function () {
+                            button3.textBlock.outlineColor = (button3.textBlock.outlineColor == oc ? "black" : oc);
+                        }, 2000);
+                
+                        scene.onDispose = function () { clearInterval(fred) };
+                
+                        var scale = 0.6;
+        
+             button3.onPointerDownObservable.add(function () {
+                            window.location.href = "level.html";
+                        });
+        	return scene;
+        };
+        
+        function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+          if (typeof stroke === 'undefined') {
+            stroke = true;
+          }
+          if (typeof radius === 'undefined') {
+            radius = 5;
+          }
+          if (typeof radius === 'number') {
+            radius = {tl: radius, tr: radius, br: radius, bl: radius};
+          } else {
+            var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+            for (var side in defaultRadius) {
+              radius[side] = radius[side] || defaultRadius[side];
+            }
+          }
+          ctx.beginPath();
+          ctx.moveTo(x + radius.tl, y);
+          ctx.lineTo(x + width - radius.tr, y);
+          ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+          ctx.lineTo(x + width, y + height - radius.br);
+          ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+          ctx.lineTo(x + radius.bl, y + height);
+          ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+          ctx.lineTo(x, y + radius.tl);
+          ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+          ctx.closePath();
+          if (fill) {
+            ctx.fill();
+          }
+          if (stroke) {
+            ctx.stroke();
+          }
+        
+        }
+        
+        
+        
+        engine = createDefaultEngine();
+        if (!engine) throw 'engine should not be null.';
+        scene = createScene();
+
+        engine.runRenderLoop(function () {
+            if (scene) {
+                scene.render();
+            }
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>

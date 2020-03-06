@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>Babylon.js sample code</title>
+
+    <!-- Babylon.js -->
+    <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+    <script src="https://preview.babylonjs.com/ammo.js"></script>
+    <script src="https://preview.babylonjs.com/cannon.js"></script>
+    <script src="https://preview.babylonjs.com/Oimo.js"></script>
+    <script src="https://preview.babylonjs.com/libktx.js"></script>
+    <script src="https://preview.babylonjs.com/earcut.min.js"></script>
+    <script src="https://preview.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+    <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+    <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+
+        var engine = null;
+        var scene = null;
+        var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
+        var createScene = function () {
+
+            // This creates a basic Babylon Scene object (non-mesh)
+            var scene = new BABYLON.Scene(engine);
+
+            // This creates and positions a free camera (non-mesh)
+            var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 5, -10), scene);
+
+            // This targets the camera to scene origin
+            camera.setTarget(BABYLON.Vector3.Zero());
+
+            // This attaches the camera to the canvas
+            camera.attachControl(canvas, true);
+
+            // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+            var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+
+            // Default intensity is 1. Let's dim the light a small amount
+            light.intensity = 0.7;
+
+            // Our built-in 'sphere' shape. Params: name, subdivs, size, scene
+            // var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+
+            // Move the sphere upward 1/2 its height
+            // sphere.position.y = 1;
+
+            // Our built-in 'ground' shape. Params: name, width, depth, subdivs, scene
+            // var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 4, scene);
+
+            // GUI
+            // var plane2 = BABYLON.Mesh.CreatePlane("plane2", 0.5);
+            // plane2.position.y = 0;
+            // plane2.position.x = 0;
+            // plane2.position.z = -2.6;
+            // plane2.visibility = 1;
+            // varadvancedTextureattr = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane2);
+            /////////////////
+            var plane5 = BABYLON.Mesh.CreatePlane("plane5", 2);
+            plane5.position.y = 4.6;
+            plane5.position.z = -7;
+            plane5.position.x = -2.1;
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane5);
+            /////////////////////
+            // var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("ground");
+
+
+            var text1 = new BABYLON.GUI.TextBlock();
+            text1.color = "white";
+            text1.fontSize = 70;
+            // text1.thickness = 8;
+            function startTimer(duration, display) {
+                var timer = duration, minutes, seconds;
+                setInterval(function () {
+                    minutes = parseInt(timer / 60, 10);
+                    seconds = parseInt(timer % 60, 10);
+                    if (minutes == 0) {
+
+                        text1.color = "red";
+                        soundReadyToBePlayed;
+                    }
+                    if (minutes == 0 && seconds < 15) {
+                        // soundReadyToBePlayed;
+                        text1.color = "red";
+                        gunshotFromAB.play();
+                        if (second == 0) {
+                            gunshotFromAB.stop();
+                        }
+
+                    }
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    seconds = seconds < 10 ? "0" + seconds : seconds;
+                    text1.text = "" + minutes + ":" + seconds;
+                    advancedTexture.addControl(text1);
+                    if (--timer < 0) {
+                        timer = duration;
+                    }
+                }, 1000);
+            }
+
+            // text1.text = "Hello world";
+            var fiveMinutes = 60 * 5;
+            startTimer(fiveMinutes);
+            return scene;
+
+        };
+
+        engine = createDefaultEngine();
+        if (!engine) throw 'engine should not be null.';
+        scene = createScene();
+
+        engine.runRenderLoop(function () {
+            if (scene) {
+                scene.render();
+            }
+        });
+
+        // Resize
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+
+</html>
