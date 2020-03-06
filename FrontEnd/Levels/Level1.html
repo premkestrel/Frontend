@@ -8,6 +8,7 @@
 
     <!-- Babylon.js -->
     <script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
     <script src="https://preview.babylonjs.com/ammo.js"></script>
     <script src="https://preview.babylonjs.com/cannon.js"></script>
@@ -50,6 +51,7 @@
         var scene = null;
         var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
         var createScene = function () {
+
             var scene = new BABYLON.Scene(engine);
             var hl, cylinder1, cylinder2, cylinder3, cylinder4;
 
@@ -59,14 +61,13 @@
             // var camera = new BABYLON.ArcRotateCamera("cam", -Math.PI / 2, Math.PI / 2, 20, BABYLON.Vector3.Zero());
 
             var light = new BABYLON.HemisphericLight("sun", new BABYLON.Vector3(0, 1, 0), scene);
-            var anchor = new BABYLON.TransformNode("");            var manager = new BABYLON.GUI.GUI3DManager(scene);
+            var anchor = new BABYLON.TransformNode("");
+            var manager = new BABYLON.GUI.GUI3DManager(scene);
             var panel = new BABYLON.GUI.PlanePanel();
             // panel.margin = 0.75;
-
             // hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("textures/environment.dds", scene);
             // scene.environmentTexture = hdrTexture;
             // scene.createDefaultSkybox(hdrTexture, true, 200, 0.7);
-
             manager.addControl(panel);
             panel.linkToTransformNode(anchor);
             panel.scaling.x = 0.05;
@@ -75,8 +76,6 @@
             panel.position.x = 0.27;
             panel.position.y = -0.25;
             panel.position.z = -2.5;
-
-            // The first parameter can be used to specify which mesh to import. Here we import all meshes
             var ttb = function () {
                 BABYLON.SceneLoader.ImportMesh("", "https://david.blob.core.windows.net/babylonjs/MRTK/", "pushButton.glb", scene, function (newMeshes) {
                     pushButtonCore = newMeshes[0];
@@ -86,7 +85,9 @@
 
             }
             var count = 0;
+
             function makePushButton(mesh, hoverColor) {
+
                 var cylinder = mesh.getChildMeshes(false, (node) => { return node.name.indexOf("Cylinder") !== -1 })[0];
                 var cylinderMat = cylinder.material.clone();
                 cylinderMat.albedoColor = new BABYLON.Color3(0.5, 0.19, 0);
@@ -166,8 +167,6 @@
                 "data:image/jpeg;base64,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",
                 "data:image/jpeg;base64,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"
                 , "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQAiIWrGtGYl3UqfSvNs4g7QypxjTHIs-LxrkQgh0tDxFrCwas4"
-
-
             ];
 
 
@@ -177,18 +176,20 @@
             var posa1 = 0, posa2 = 0, posa3 = 0;
             var Cylinder = [];
             var employeelist = [];
-            var Employee = [
-                { name: "Emp1", skill: "skill1", idle: "yes" },//0
-                { name: "Emp2", skill: "skill2", idle: "yes" },//1
-                { name: "Emp3", skill: "skill3", idle: "yes" },//2
-                { name: "Emp4", skill: "skill4", idle: "yes" },//3
-                { name: "Emp5", skill: "skill5", idle: "yes" },//4
-                { name: "Emp6", skill: "skill6", idle: "yes" },//5
-                { name: "Emp7", skill: "skill7", idle: "yes" },//6
-                { name: "Emp8", skill: "skill8", idle: "yes" },//7
-                { name: "Emp9", skill: "skill9", idle: "yes" },//8
-                { name: "Emp9", skill: "skill9", idle: "yes" }//9
-            ]
+            var bemplist = [];
+            var Employee;
+            // var Employee = [
+            //     { name: "Emp1", skill: ["skill1", "skill5",] },//0
+            //     { name: "Emp2", skill: ["skill2", "skill9"] },//1
+            //     { name: "Emp3", skill: ["skill3", "skill5", "skill10"] },//2
+            //     { name: "Emp4", skill: ["skill4"] },//3
+            //     { name: "Emp5", skill: ["skill5", "skill5"] },//4
+            //     { name: "Emp6", skill: ["skill6", "skill5", "skill10"] },//5
+            //     { name: "Emp7", skill: ["skill7",] },//6
+            //     { name: "Emp8", skill: ["skill8", "skill5", "skill10", "skill10"] },//7
+            //     { name: "Emp9", skill: ["skill9"] },//8
+            //     { name: "Emp10", skill: ["skill10", "skill5"] }//9
+            // ]
 
             var rmattr = function () {
                 for (var index = 0; index < 8; index++) {
@@ -222,15 +223,15 @@
                     flagatt1 = 1;
                 } else {
                     var pickedMesh = meshEvent.meshUnderPointer;
-                    if (employeelist.indexOf(Employee[parseInt(pickedMesh.name) - 4]) == -1) {
+                    if (employeelist.indexOf(bemplist[parseInt(pickedMesh.name) - 500]) == -1) {
                         // console.log("while pushing" + Employee[parseInt(pickedMesh.name) - 4])
-                        employeelist.push(Employee[parseInt(pickedMesh.name) - 4]);
+                        employeelist.push(bemplist[parseInt(pickedMesh.name) - 500]);
                         alert("employee added");
 
                     } else {
                         var result = confirm("Employee already added want to remove?")
                         if (result == true) {
-                            employeelist.pop(Employee[parseInt(pickedMesh.name) - 4]);
+                            employeelist.pop(Employee[parseInt(pickedMesh.name) - 500]);
                         }
 
                         // alert("employee already added");
@@ -254,14 +255,30 @@
 
             }
 
+
             var pickedMesh;
-            var advancedTextureattr;
+            var str;
+            var advancedTextureattr, Employee;
             var show = function (name) {
                 var angle = 0;
-                var groupwidget = name
+                var groupwidget = name;
                 groupwidget.visibility = 1;
-                for (var index = 0; index < 8; index++) {
-                    Cylinder[index] = BABYLON.Mesh.CreateCylinder(4 + index, 0.02, .5, .5, 20, 1, scene);
+                const Http = new XMLHttpRequest();
+                var id1 = 500
+                const url = 'http://127.0.0.1:1000/getEmployee';
+                Http.open("GET", url);
+                Http.send();
+                Http.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        Employee = JSON.parse(Http.responseText);
+                        // text3.text = response;
+                        console.log(Employee);
+                    }
+                }
+
+
+                for (var index = 0; index < 16; index++) {
+                    Cylinder[index] = BABYLON.Mesh.CreateCylinder(500 + index, 0.01, .5, .5, 20, 1, scene);
                     Cylinder[index].position.y = Math.sin(angle);
                     Cylinder[index].position.x = Math.cos(angle);
                     Cylinder[index].rotation.x = Math.PI / 2;
@@ -279,7 +296,7 @@
 
                         new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPointerOverTrigger, tooltip(Cylinder[index]))
                     );
-                    angle -= Math.PI / 4;
+                    angle -= Math.PI / (16 / 2);
                 }
                 var alpha = Math.PI;
                 scene.beforeRender = function () {
@@ -288,6 +305,7 @@
                 }
             }
             hl = new BABYLON.HighlightLayer("hl1", scene);
+            var msg;
             var pickCylinder = function (meshEvent) {
                 pickedMesh = meshEvent.meshUnderPointer;
                 // console.log()
@@ -375,6 +393,26 @@
                     } else {
                         id = setInterval(frameback, 5);
                         hl.removeMesh(pickedMesh);
+
+                        const Http = new XMLHttpRequest();
+                        const url = 'http://127.0.0.1:1000/level/allocation';
+                        Http.open("POST", url, true);
+                        var params = JSON.stringify({ 'emp_list': employeelist });
+                        Http.setRequestHeader("Content-type", "application/json; charset=utf-8");
+                        // Http.setRequestHeader("Content-length", params.length);
+                        // Http.setRequestHeader("Connection", "close");
+
+                        // Http.send();
+                        Http.onreadystatechange = function () {
+                            if (this.readyState == 4 && this.status == 200) {
+                                var response = Http.responseText;
+                                msg = response;
+                                console.log(response);
+                                // console.log(response);
+                                //text2.text=response;//response will contain the information about the client 
+                            }
+                        }
+                        Http.send(params);
                         hl.addMesh(cylinder4, BABYLON.Color3.Green());
                         rmattr();
                         flag3 = 0;
@@ -387,6 +425,8 @@
 
 
                 } else if (pickedMesh.name == 3) {
+
+
                     //x=-4.5 pos2
                     //y=-2 pos1
                     if (flag4 == 0) {
@@ -465,39 +505,92 @@
             }
             ////////////////popup/////////////////////////////
             var tooltip = function (x) {
+                var text1 = new BABYLON.GUI.TextBlock();
                 var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
                 advancedTexture.useInvalidateRectOptimization = false;
                 let rect1 = new BABYLON.GUI.Rectangle();
                 advancedTexture.addControl(rect1);
                 rect1.width = "250px";
-                rect1.height = "150px";
+                rect1.height = "250px";
                 rect1.thickness = 2;
                 console.log(x.name);
-                var Message = ["Client", "Manager", "Employee", "work",];
+                var Message = ["Client", "Manager", "Employee", "work"];
                 var xx;
 
                 if (x.name == 0) {
                     rect1.linkOffsetX = "-10px";
                     rect1.linkOffsetY = "20px";
-                    xx = Message[parseInt(x.name)];
-                    console.log(Message[parseInt(x.name)]);
+                    // xx = Message[parseInt(x.name)];
+                    // const Http = new XMLHttpRequest();
+                    // const url = 'http://127.0.0.1:1000/level1/getClient';
+                    // Http.open("GET", url);
+                    // Http.send();
+                    // Http.onreadystatechange = function () {
+                    //     if (this.readyState == 4 && this.status == 200) {
+                    //         text1.text = "Client\n" + Http.responseText;
+                    //     }
+                    // }
+                    // console.log(Message[parseInt(x.name)]);
+
+                    /////////////////////
+                    const Http = new XMLHttpRequest();
+                    const url = 'http://127.0.0.1:1000/level1/getClient';
+                    Http.open("GET", url);
+                    Http.send();
+                    Http.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            var response = JSON.parse(Http.responseText);
+                            text1.text = "CLIENT" + "\nProject type:" + response.Project_Type + "\ncost:" + response.cost + "\ndeadline:" + response.deadline + "\npatientLevel:" + response.patient_level;
+                            // console.log(response);
+                            //text2.text=response;//response will contain the information about the client 
+                        }
+                    }
+
+
+                    //////////////
                 }
                 else if (x.name == 1) {
+                    ////manager
                     rect1.linkOffsetX = "-10px";
                     rect1.linkOffsetY = "-40px";
+                    const Http = new XMLHttpRequest();
+                    const url = 'http://127.0.0.1:1000/getProjectSkills';
+                    Http.open("GET", url);
+                    Http.send();
+                    Http.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            var response = JSON.parse(Http.responseText);
+                            text1.text = "Manager\n " + "project Type: " + response[0].name + "     " + "Skills: " + response[0].skills + "\nproject Type: " + response[1].name + "     " + "Skills: " + response[1].skills + "\nproject Type: " + response[2].name + "     " + "Skills: " + response[2].skills;
+                            console.log(response[0].name);
+                            // console.log("\n")
+                            // console.log(response[0].skills);
+                        }
+                    }
+
+
                     xx = Message[parseInt(x.name)];
+                    text1.text = xx;
                     console.log(Message[parseInt(x.name)]);
                 }
                 else if (x.name == 2) {
                     rect1.linkOffsetX = "20px";
                     rect1.linkOffsetY = "20px";
+
                     xx = Message[parseInt(x.name)];
+                    text1.text = xx;
                     console.log(Message[parseInt(x.name)]);
                 }
                 else if (x.name == 3) {
                     rect1.linkOffsetX = "-10px";
                     rect1.linkOffsetY = "-40px";
                     xx = Message[parseInt(x.name)];
+                    // console.log("message" + msg);
+                    if (msg == "Allocated") {
+                        text1.text = "Work completed"
+                    } else {
+                        text1.text = "Work incompleted"
+                    }
+                    // text1.text = xx;
                     console.log(Message[parseInt(x.name)]);
                 }
                 // else if (x.name == 4) {
@@ -511,28 +604,199 @@
                 else {
                     rect1.linkOffsetX = "0px";
                     rect1.linkOffsetY = "0px";
-                    console.log(x.name);
-                    if (x.name == 4) {
-                        xx = Employee[parseInt(x.name) - 4].name + "\n" + Employee[parseInt(x.name) - 4].skill + "\n" + Employee[parseInt(x.name) - 4].idle;
+                    let response;
+                    var c = function (x) {
+                        var Employee;
+                        const Http = new XMLHttpRequest();
+                        const url1 = 'http://127.0.0.1:1000/getEmployee';
+                        Http.open("GET", url1);
+                        Http.send();
+                        Http.onreadystatechange = function () {
+                            if (this.readyState == 4 && this.status == 200) {
+                                Employee = JSON.parse(Http.responseText);
+                                bemplist = Employee;
+                                console.log(Employee);
+                                text1.text = Employee[x - 500].name + "\n" + Employee[x - 500].skills;
+                            }
+                        }
+
                     }
-                    else if (x.name == 5) {
-                        xx = Employee[parseInt(x.name) - 4].name + "\n" + Employee[parseInt(x.name) - 4].skill + "\n" + Employee[parseInt(x.name) - 4].idle;
-                    } else if (x.name == 6) {
-                        xx = Employee[parseInt(x.name) - 4].name + "\n" + Employee[parseInt(x.name) - 4].skill + "\n" + Employee[parseInt(x.name) - 4].idle;
-                    } else if (x.name == 7) {
-                        xx = Employee[parseInt(x.name) - 4].name + "\n" + Employee[parseInt(x.name) - 4].skill + "\n" + Employee[parseInt(x.name) - 4].idle;
-                    } else if (x.name == 8) {
-                        xx = Employee[parseInt(x.name) - 4].name + "\n" + Employee[parseInt(x.name) - 4].skill + "\n" + Employee[parseInt(x.name) - 4].idle;
-                    } else if (x.name == 9) {
-                        xx = Employee[parseInt(x.name) - 4].name + "\n" + Employee[parseInt(x.name) - 4].skill + "\n" + Employee[parseInt(x.name) - 4].idle;
-                    } else if (x.name == 10) {
-                        xx = Employee[parseInt(x.name) - 4].name + "\n" + Employee[parseInt(x.name) - 4].skill + "\n" + Employee[parseInt(x.name) - 4].idle;
-                    } else if (x.name == 11) {
-                        xx = Employee[parseInt(x.name) - 4].name + "\n" + Employee[parseInt(x.name) - 4].skill + "\n" + Employee[parseInt(x.name) - 4].idle;
-                    } else if (x.name == 12) {
-                        xx = Employee[parseInt(x.name) - 4].name + "\n" + Employee[parseInt(x.name) - 4].skill + "\n" + Employee[parseInt(x.name) - 4].idle;
-                    } else if (x.name == 13) {
-                        xx = Employee[parseInt(x.name) - 4].name + "\n" + Employee[parseInt(x.name) - 4].skill + "\n" + Employee[parseInt(x.name) - 4].idle;
+
+                    if (x.name == 500) {
+
+                        // var c;
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     c = Employee[parseInt(x.name) - 500].name + "\n" + c + i;
+                        // }
+                        // text1.text = Employee[parseInt(x.name) - 500].name + c;
+                        c(500);
+                        // var c1 = c(500)
+                        // console.log(c1);
+                        // text1.text = c1;
+                        // var Employee;
+                        // const Http = new XMLHttpRequest();
+                        // const url1 = 'http://127.0.0.1:1000/getEmployee';
+                        // Http.open("GET", url1);
+                        // Http.send();
+                        // Http.onreadystatechange = function () {
+                        //     if (this.readyState == 4 && this.status == 200) {
+                        //         Employee = JSON.parse(Http.responseText);
+
+                        //         console.log(Employee);
+                        //         text1.text = Employee[0].name + "\n" + Employee[0].skills;
+                        //     }
+                        // }
+                        // console.log(Employee[0].name);
+                        // console.log(Employee[0].skills);
+                        // for (let i in Employee[parseInt(x.name) - 499].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 499].skills[i]);
+                        // }
+                    }
+                    else if (x.name == 501) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skill;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(501);
+
+                    } else if (x.name == 502) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skill;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(502);
+                    } else if (x.name == 503) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skill;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(503);
+                    } else if (x.name == 504) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skill;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(504);
+                    } else if (x.name == 505) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skill;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(505);
+                    } else if (x.name == 506) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skill;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(506);
+                    } else if (x.name == 507) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skill;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(507);
+                    } else if (x.name == 508) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skills;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(508);
+                    } else if (x.name == 509) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skills;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(509);
+                    } else if (x.name == 510) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skills;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(510);
+                    } else if (x.name == 511) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skills;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(511);
+                    } else if (x.name == 512) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skills;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(512);
+                    } else if (x.name == 513) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skills;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(501);
+                    } else if (x.name == 514) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skills;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(514);
+                    } else if (x.name == 515) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skills;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(516);
+                    } else if (x.name == 516) {
+                        // xx = Employee[parseInt(x.name) - 500].name + "\n" + Employee[parseInt(x.name) - 500].skills;
+                        // text1.text = xx;
+                        // console.log(Employee[parseInt(x.name) - 500].name);
+                        // console.log(Employee[parseInt(x.name) - 500].skills);
+                        // for (let i in Employee[parseInt(x.name) - 500].skills) {
+                        //     console.log(Employee[parseInt(x.name) - 500].skills[i]);
+                        // }
+                        c(516);
                     }
                     //console.log(Message[parseInt(x.name)]);
 
@@ -551,9 +815,9 @@
                 rect1.linkWithMesh(x);
 
 
-                let text1 = new BABYLON.GUI.TextBlock();
+
                 // text1.text = Message[parseInt(x.name)];
-                text1.text = xx;
+                // text1.text = xx;
                 text1.color = "Black";
                 text1.fontSize = 20;
                 text1.textWrapping = true;
@@ -565,6 +829,10 @@
                 text1.paddingBottom = "10px";
                 text1.paddingLeft = "10px";
                 text1.paddingRight = "10px";
+
+
+
+
 
 
                 let scaleXAnimation = new BABYLON.Animation("myAnimation", "scaleX", 30, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
